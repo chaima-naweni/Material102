@@ -1,3 +1,5 @@
+
+
 // Copyright 2018-present the Flutter authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,30 +15,54 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-
+import 'backdrop.dart'; // New code
+import 'category_menu_page.dart';
+import 'colors.dart';
 import 'home.dart';
 import 'login.dart';
-import 'colors.dart';
+import 'model/product.dart'; // New code
 import 'supplemental/cut_corners_border.dart';
-// TODO: Convert ShrineApp to stateful widget (104)
-class ShrineApp extends StatelessWidget {
+
+
+class ShrineApp extends StatefulWidget {
   const ShrineApp({Key? key}) : super(key: key);
 
+  @override
+  State<ShrineApp> createState() => _ShrineAppState();
+}
+// Convert ShrineApp to stateful widget (104)
+class _ShrineAppState extends State<ShrineApp> {
+  Category _currentCategory = Category.all;
+  void _onCategoryTap(Category category) {
+    setState(() {
+      _currentCategory = category;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Shrine',
-      // TODO: Change home: to a Backdrop with a HomePage frontLayer (104)
-      home:  HomePage(),
+      //  Change home: to a Backdrop with a HomePage frontLayer (104)
+      home: Backdrop(
+        // TODO: Make currentCategory field take _currentCategory (104)
+        currentCategory: _currentCategory,
+        // TODO: Pass _currentCategory for frontLayer (104)
+        frontLayer: HomePage(category: _currentCategory),
+        // TODO: Change backLayer field value to CategoryMenuPage (104)
+        backLayer: CategoryMenuPage(
+          currentCategory: _currentCategory,
+          onCategoryTap: _onCategoryTap,
+        ),
+        frontTitle: Text('SHRINE'),
+        backTitle: Text('MENU'),
+      ),
       // TODO: Make currentCategory field take _currentCategory (104)
-      // TODO: Pass _currentCategory for frontLayer (104)
+
       // TODO: Change backLayer field value to CategoryMenuPage (104)
       initialRoute: '/login',
       onGenerateRoute: _getRoute,
       theme: _kShrineTheme,
-      // TODO: Add a theme (103)
     );
-
   }
 
   Route<dynamic>? _getRoute(RouteSettings settings) {
@@ -52,9 +78,6 @@ class ShrineApp extends StatelessWidget {
   }
 }
 
-// TODO: Build a Shrine Theme (103)
-// TODO: Build a Shrine Text Theme (103)
-// TODO: Build a Shrine Theme (103)
 final ThemeData _kShrineTheme = _buildShrineTheme();
 
 ThemeData _buildShrineTheme() {
@@ -66,13 +89,10 @@ ThemeData _buildShrineTheme() {
       secondary: kShrineBrown900,
       error: kShrineErrorRed,
     ),
-    // TODO: Add the text themes (103)
     textTheme: _buildShrineTextTheme(base.textTheme),
     textSelectionTheme: const TextSelectionThemeData(
       selectionColor: kShrinePink100,
     ),
-    // TODO: Add the icon themes (103)
-    // TODO: Decorate the inputs (103)
     inputDecorationTheme: const InputDecorationTheme(
       focusedBorder: CutCornersBorder(
         borderSide: BorderSide(
@@ -80,14 +100,14 @@ ThemeData _buildShrineTheme() {
           color: kShrineBrown900,
         ),
       ),
-      border: CutCornersBorder(), // Replace code
+      border: CutCornersBorder(),
     ),
   );
-
 }
-// TODO: Build a Shrine Text Theme (103)
+
 TextTheme _buildShrineTextTheme(TextTheme base) {
-  return base.copyWith(
+  return base
+      .copyWith(
     headline5: base.headline5!.copyWith(
       fontWeight: FontWeight.w500,
     ),
@@ -102,7 +122,8 @@ TextTheme _buildShrineTextTheme(TextTheme base) {
       fontWeight: FontWeight.w500,
       fontSize: 16.0,
     ),
-  ).apply(
+  )
+      .apply(
     fontFamily: 'Rubik',
     displayColor: kShrineBrown900,
     bodyColor: kShrineBrown900,
